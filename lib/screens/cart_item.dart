@@ -7,7 +7,7 @@ class CartItem {
   CartItem({required this.id, required this.product});
 
   int _qty = 0;
-  double _totalPrice = 0;
+  final double _totalPrice = 0;
 
   set qty(int value) => _qty = value;
   int get qty => _qty;

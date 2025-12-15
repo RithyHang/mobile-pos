@@ -99,13 +99,22 @@ class ProductRepository {
   }
 
   static void removeProductFromCart(int id) {
+    totalQty = 0;
     final index = cartItems.indexWhere((item) => item.id == id);
     cartItems.removeAt(index);
+    for (var item in cartItems) {
+      totalQty += item.qty;
+      // print('${item.qty} : ${item.product.name}');
+    }
+    // print('----------- end ------------');
   }
 
   static void getTotalQty() {
+    totalQty = 0;
     for (var item in cartItems) {
-      totalQty = cartItems.length;
+      totalQty += item.qty;
+      // print('${item.qty} : ${item.product.name}');
     }
+    // print('----------- end ------------');
   }
 }
