@@ -170,15 +170,10 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
 
           // ------ Middle Cart Row Start --------
           Container(
-            padding: EdgeInsets.all(64),
+            padding: EdgeInsets.all(50),
             decoration: BoxDecoration(
               color: Colors.white,
-              border: Border(
-                bottom: BorderSide(
-                  width: 0.65,
-                  color: Colors.black.withValues(alpha: 0.1),
-                ),
-              ),
+              borderRadius: BorderRadius.circular(15)
             ),
             child: ProductRepository.cartItems.isEmpty
                 ? Column(
@@ -202,13 +197,14 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
                           // ------------ Cart Product -------------
                           (item) => Container(
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 // === Name & Delete
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(item.product.name),
+                                    Text(item.product.name, style: TextStyle(fontWeight: FontWeight.bold),),
                                     IconButton(
                                       onPressed: () {
                                         ProductRepository.removeProductFromCart(
@@ -216,35 +212,43 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
                                         );
                                         setState(() {});
                                       },
-                                      icon: Icon(CupertinoIcons.delete),
+                                      icon: Icon(CupertinoIcons.delete, color: Colors.red),
                                     ),
                                   ],
                                 ),
 
                                 // === Price
-                                Text(item.product.price.toStringAsFixed(2)),
+                                Text('\$ ${item.product.price.toStringAsFixed(2)} each'),
 
                                 // === QTY and Subtotal
                                 Row(
                                   children: [
                                     IconButton(
                                       onPressed: () {
-                                        // To implemetn;
+                                        ProductRepository.decreaseQty(item.id);
+                                        setState(() {
+                                          
+                                        });
                                       },
-                                      icon: Icon(Icons.remove),
+                                      icon: Icon(Icons.remove,),
                                     ),
                                     Text(item.qty.toString()),
                                     IconButton(
                                       onPressed: () {
-                                        // To implement;
+                                        ProductRepository.increaseQty(item.id);
+                                        setState(() {
+                                          
+                                        });
                                       },
-                                      icon: Icon(Icons.add),
+                                      icon: Icon(Icons.add,),
                                     ),
-                                    Text(item.totalPrice.toStringAsFixed(2)),
+                                    Spacer(),
+                                    Text('\$ ${item.totalPrice.toStringAsFixed(2)}', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),),
                                   ],
                                 ),
                               ],
                             ),
+                          
                           ),
                         )
                         .toList(),

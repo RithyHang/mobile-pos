@@ -89,9 +89,22 @@ class ProductRepository {
     getTotalQty();
   }
 
-  static void increaseQty() {}
 
-  static void decreaseQty() {}
+  static void increaseQty(int id) {
+    final index = cartItems.indexWhere((items) => items.id == id);
+    cartItems[index].qty += 1;
+  }
+
+  static void decreaseQty(int id) {
+    final index = cartItems.indexWhere((item) => item.id == id);
+    if (index != -1) {
+      if (cartItems[index].qty > 1) {
+        cartItems[index].qty -= 1; // Decrease the quantity by 1
+      } else {
+        cartItems.removeAt(index); // If qty is 1 → remove item completely
+      }
+    }
+  }
 
   static void clearCart() {
     cartItems.clear();
