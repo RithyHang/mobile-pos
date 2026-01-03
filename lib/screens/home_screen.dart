@@ -1,10 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:midterm/repositories/product_repository.dart';
+import 'package:midterm/screens/history_screen.dart';
 import 'package:midterm/screens/new_sale_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,14 +72,17 @@ class HomeScreen extends StatelessWidget {
                   childAspectRatio: 3 / 2.25,
                   padding: EdgeInsets.zero,
                   children: [
+
+                    // ---------- New Sales Button ----------
                     TextButton(
-                      onPressed: () {
-                        Navigator.push(
+                      onPressed: () async {
+                        await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => NewSaleScreen(),
                           ),
                         );
+                        setState(() {});
                       },
                       style: TextButton.styleFrom(
                         backgroundColor: Color(0xFF00A63E),
@@ -100,6 +110,8 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                     ),
+
+                    // ---------- Add Product Button ----------
                     TextButton(
                       onPressed: null,
                       style: TextButton.styleFrom(
@@ -132,34 +144,46 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                     ),
+
+                    // ---------- History Button ----------
                     TextButton(
-                      onPressed: null,
-                      style: TextButton.styleFrom(
-                        // backgroundColor: Color(0xFF00A63E),
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                            width: 0.65,
-                            color: Colors.black.withValues(alpha: 0.1),
+                      onPressed: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HistoryScreen(),
                           ),
+                        );
+                        setState(() {});
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: Color(0xFFF0B100),
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.history, color: Colors.black, size: 20),
+                          Icon(
+                            Icons.history,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                           SizedBox(height: 8),
                           Text(
                             'History',
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.black,
+                              color: Colors.white,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                         ],
                       ),
                     ),
+
+                    // ---------- Print Last Button ----------
                     TextButton(
                       onPressed: null,
                       style: TextButton.styleFrom(
@@ -212,14 +236,88 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Quick Action', style: TextStyle(fontSize: 16)),
+                Text('Recent Sales', style: TextStyle(fontSize: 16)),
                 SizedBox(height: 20),
-                Padding(
+                ProductRepository.recentTransactions.isEmpty? Padding(
                   padding: const EdgeInsets.all(24),
                   child: Text(
                     'No transactions yet. Start a new sale!',
                     style: TextStyle(fontSize: 18, color: Color(0xFF6A7282)),
                   ),
+                ): SizedBox(
+                  height: 300,
+                  child:
+                  // --------------------- Recent Sales List Start -----------------
+                  Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      itemCount: ProductRepository.recentTransactions.length,
+                      physics: const BouncingScrollPhysics(), // Optional: adds a nice iOS-style bounce
+                      itemBuilder: (context, index) {
+                        final trx = ProductRepository.recentTransactions[index];
+
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor: Colors.blue.withOpacity(0.1),
+                                    child: const Icon(Icons.receipt_long, color: Colors.blue, size: 20),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        trx.code,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        "${trx.orderDate.day}/${trx.orderDate.month}/${trx.orderDate.year}",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey.shade500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                "\$${trx.totalPrice.toStringAsFixed(2)}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Colors.green,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                  // --------------------- Recent Sales List End -----------------
                 ),
               ],
             ),

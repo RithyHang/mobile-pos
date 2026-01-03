@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:midterm/models/product.dart';
 import 'package:midterm/repositories/product_repository.dart';
 
@@ -19,6 +20,37 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
   void addToCart(Product product) {
     ProductRepository.addToCart(product);
     setState(() {});
+  }
+
+  _showLoadings(){
+    showDialog(context: context, builder: (context) => SizedBox(
+      width: 120,
+      height: 120,
+      child: Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+        constraints: BoxConstraints(
+          maxHeight: 120,
+          maxWidth: 120,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // CircularProgressIndicator(),
+              // CupertinoActivityIndicator(),
+              CircularProgressIndicator.adaptive(),
+              SizedBox(height: 8,),
+              Text('please wait', style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black),)
+            ],
+          ),
+        ),
+      ),
+    ));
   }
 
   @override
@@ -82,8 +114,8 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
                           child: Container(
                             constraints: BoxConstraints(
                               minWidth: double.infinity,
-                              minHeight: 100,
-                              maxHeight: 160,
+                              minHeight: 70,
+                              maxHeight: 90,
                             ),
                             child: Image.network(
                               product.image,
@@ -178,7 +210,7 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
             child: ProductRepository.cartItems.isEmpty
                 ? Column(
                     children: [
-                      Icon(CupertinoIcons.shopping_cart, size: 48),
+                      Lottie.asset('assets/lotties/empty_box.json'),
                       SizedBox(height: 8),
                       Text(
                         'Cart is empty',
@@ -267,7 +299,8 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
                   children: [
                     Text('Total', style: TextStyle(fontSize: 18)),
                     Text(
-                      '\$0.00',
+                      //Price TOTAL
+                      '\$ ${ProductRepository.getTotalPrice().toStringAsFixed(2)}',
                       style: TextStyle(fontSize: 18, color: Color(0xFF00A63E)),
                     ),
                   ],
@@ -314,12 +347,17 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
                     //------------- Checkout Button ---------------
                     Expanded(
                       child: Opacity(
-                        opacity: isCartEmpty ? 0.5 : 1,
+                        opacity: ProductRepository.cartItems.isEmpty ? 0.5 : 1,
                         child: TextButton(
-                          onPressed: isCartEmpty
+                          onPressed: ProductRepository.cartItems.isEmpty
                               ? null
-                              : () {
-                                  print('Checkout pressed');
+                              : () async {
+                                  ProductRepository.checkout();
+                                  _showLoadings();
+                                  await Future.delayed(Duration(seconds: 2), () {
+                                    Navigator.pop(context);
+                                  });
+                                  Navigator.pop(context);
                                 },
                           style: TextButton.styleFrom(
                             padding: EdgeInsets.symmetric(
