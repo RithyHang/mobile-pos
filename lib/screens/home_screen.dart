@@ -72,7 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   childAspectRatio: 3 / 2.25,
                   padding: EdgeInsets.zero,
                   children: [
-
                     // ---------- New Sales Button ----------
                     TextButton(
                       onPressed: () async {
@@ -147,8 +146,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     // ---------- History Button ----------
                     TextButton(
-                      onPressed: () async {
-                        await Navigator.push(
+                      onPressed: () {
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => HistoryScreen(),
@@ -165,11 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            Icons.history,
-                            color: Colors.white,
-                            size: 20,
-                          ),
+                          Icon(Icons.history, color: Colors.white, size: 20),
                           SizedBox(height: 8),
                           Text(
                             'History',
@@ -222,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           SizedBox(height: 24),
-          // Recent Sale
+          //  -------------------- Recent Sale ------------------
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(14),
@@ -238,87 +233,101 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text('Recent Sales', style: TextStyle(fontSize: 16)),
                 SizedBox(height: 20),
-                ProductRepository.recentTransactions.isEmpty? Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(
-                    'No transactions yet. Start a new sale!',
-                    style: TextStyle(fontSize: 18, color: Color(0xFF6A7282)),
-                  ),
-                ): SizedBox(
-                  height: 300,
-                  child:
-                  // --------------------- Recent Sales List Start -----------------
-                  Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      itemCount: ProductRepository.recentTransactions.length,
-                      physics: const BouncingScrollPhysics(), // Optional: adds a nice iOS-style bounce
-                      itemBuilder: (context, index) {
-                        final trx = ProductRepository.recentTransactions[index];
-
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.04),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
+                ProductRepository.recentTransactions.isEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Text(
+                          'No transactions yet. Start a new sale!',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Color(0xFF6A7282),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  CircleAvatar(
-                                    backgroundColor: Colors.blue.withOpacity(0.1),
-                                    child: const Icon(Icons.receipt_long, color: Colors.blue, size: 20),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        trx.code,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        "${trx.orderDate.day}/${trx.orderDate.month}/${trx.orderDate.year}",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey.shade500,
-                                        ),
-                                      ),
-                                    ],
+                        ),
+                      )
+                    : SizedBox(
+                        height: 300,
+                        child: ListView(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                          physics: const BouncingScrollPhysics(),
+                          // --- Using .map() here ---
+                          children: ProductRepository.recentTransactions.map((
+                            trx,
+                          ) {
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(
+                                  16,
+                                ), // Rounded corners
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.04),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4),
                                   ),
                                 ],
                               ),
-                              Text(
-                                "\$${trx.totalPrice.toStringAsFixed(2)}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: Colors.green,
-                                ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundColor: Colors.blue
+                                            .withOpacity(0.1),
+                                        child: const Icon(
+                                          Icons.receipt_long,
+                                          color: Colors.blue,
+                                          size: 20,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          // code
+                                          Text(
+                                            trx.code,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            "${trx.orderDate.day}/${trx.orderDate.month}/${trx.orderDate.year}",
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey.shade500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    "\$${trx.totalPrice.toStringAsFixed(2)}",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                  // --------------------- Recent Sales List End -----------------
-                ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                // --------------------- Recent Sales List End -----------------
               ],
             ),
           ),

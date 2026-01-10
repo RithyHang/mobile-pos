@@ -114,8 +114,8 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
                           child: Container(
                             constraints: BoxConstraints(
                               minWidth: double.infinity,
-                              minHeight: 70,
-                              maxHeight: 90,
+                              minHeight: 100,
+                              maxHeight: 100,
                             ),
                             child: Image.network(
                               product.image,
