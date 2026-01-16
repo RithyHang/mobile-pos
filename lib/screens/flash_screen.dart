@@ -29,12 +29,12 @@ class _FlashScreenState extends State<FlashScreen> {
     if(token != null){
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
+        MaterialPageRoute(builder: (context) => HomeScreen()),
         (route) => false);
     }else{
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (context) => LoginScreen()),
         (route) => false);
     }
   }

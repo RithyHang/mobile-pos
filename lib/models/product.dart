@@ -20,9 +20,9 @@ class Product {
       id: json['id'],
       name: json['title'],
       category: json['category'],
-      price: json['price'] ?? 0.0,
-      image: json['image'] ?? '',
-      stock: json['stock'] ?? 0,
+      price: (json['price'] as num).toDouble(),
+      image: json['image'],
+      stock: 10, // Fake API has no stock → mock it
     );
   }
 }

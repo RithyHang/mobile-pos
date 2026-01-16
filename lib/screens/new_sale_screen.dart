@@ -18,6 +18,11 @@ class NewSaleScreen extends StatefulWidget {
 }
 
 class _NewSaleScreenState extends State<NewSaleScreen> {
+  @override
+  void initState(){
+    super.initState();
+    initData();
+  }
 
   // list variables
   bool isCartEmpty = false;
@@ -75,7 +80,7 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
       //   "ngrok-skip-browser-warning": "true",
       // },
     );
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       final data = json.decode(response.body) as List;
       for (var item in data) {
         products.add(Product.fromJson(item));
@@ -83,7 +88,6 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
       ProductRepository.products = products;
       setState(() {});
     }
-
   }
 
   @override
@@ -147,13 +151,14 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
                           child: Container(
                             constraints: BoxConstraints(
                               minWidth: double.infinity,
-                              minHeight: 100,
-                              maxHeight: 100,
+                              minHeight: 120,
+                              maxHeight: 160,
                             ),
                             child: Image.network(
                               product.image,
-                              height: 160,
+                              height: 16,
                               fit: BoxFit.cover,
+                              alignment: Alignment.topCenter,
                               errorBuilder: (context, error, stackTrace) =>
                                   Icon(
                                     CupertinoIcons.cube,
@@ -169,6 +174,7 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
                         // ------------- product detail --------------
                         Text(
                           product.name,
+                          maxLines: 1,
                           style: TextStyle(fontSize: 14, color: Colors.black),
                         ),
                         Text(

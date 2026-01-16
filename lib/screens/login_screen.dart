@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final response = await http.post(
       Uri.parse(ApiDomain.domain + ApiEndPoint.login),
       body: jsonEncode({
-        "email": _emailController.text,
+        "username": _emailController.text,
         "password": _passwordController.text,
       }),
       headers: {"Content-Type": "application/json"},
@@ -50,9 +50,10 @@ class _LoginScreenState extends State<LoginScreen> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // Handle the response
-    if (response.statusCode == 201) {
+    if (response.statusCode == 201 || response.statusCode == 200) {
       prefs.setString('pos.token', data['token']);
       AuthRepository.token = data['token'];
+
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => HomeScreen()),

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:midterm/repositories/product_repository.dart';
 import 'package:midterm/screens/history_screen.dart';
+import 'package:midterm/screens/login_screen.dart';
 import 'package:midterm/screens/new_sale_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -12,10 +13,58 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  // Functions
+  void logOut(){
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+        (route) => false);
+  }
+
+  _showLogoutDialog() {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(15)),
+        title: Text("Logout"),
+        content: Text("Are you sure you want to log out?"),
+        actions: [
+          // The "No" button
+          TextButton(
+            onPressed: () => Navigator.pop(context), // Just closes the dialog
+            child: Text("Cancel", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+          ),
+          // "Yes" button
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              logOut();
+            },
+            child: Text("Logout", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Dashboard', style: TextStyle(fontSize: 20))),
+      appBar: AppBar(title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('Dashboard', style: TextStyle(fontSize: 20)),
+          GestureDetector(
+            onTap: _showLogoutDialog,
+            child: Text('Logout', style: TextStyle(color: Colors.green[700]),),
+          )
+        ],
+      )),
       body: ListView(
         padding: EdgeInsets.all(20),
         children: [
