@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:midterm/api/domain/domain.dart';
+import 'package:midterm/api/end_point/api_end_point.dart';
 import 'package:midterm/models/product.dart';
+import 'package:midterm/repositories/auth_repository.dart';
 import 'package:midterm/repositories/product_repository.dart';
+import 'package:http/http.dart' as http;
 
 class NewSaleScreen extends StatefulWidget {
   const NewSaleScreen({super.key});
@@ -12,45 +18,72 @@ class NewSaleScreen extends StatefulWidget {
 }
 
 class _NewSaleScreenState extends State<NewSaleScreen> {
+
+  // list variables
   bool isCartEmpty = false;
   final TextEditingController _searchController = TextEditingController();
-
   int qty = 0;
+  List<Product> products = [];
 
   void addToCart(Product product) {
     ProductRepository.addToCart(product);
     setState(() {});
   }
 
-  _showLoadings(){
-    showDialog(context: context, builder: (context) => SizedBox(
-      width: 120,
-      height: 120,
-      child: Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
-        constraints: BoxConstraints(
-          maxHeight: 120,
-          maxWidth: 120,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // CircularProgressIndicator(),
-              // CupertinoActivityIndicator(),
-              CircularProgressIndicator.adaptive(),
-              SizedBox(height: 8,),
-              Text('please wait', style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black),)
-            ],
+  _showLoadings() {
+    showDialog(
+      context: context,
+      builder: (context) => SizedBox(
+        width: 120,
+        height: 120,
+        child: Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          constraints: BoxConstraints(maxHeight: 120, maxWidth: 120),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // CircularProgressIndicator(),
+                // CupertinoActivityIndicator(),
+                CircularProgressIndicator.adaptive(),
+                SizedBox(height: 8),
+                Text(
+                  'please wait',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
-    ));
+    );
+  }
+
+  void initData() async {
+    final response = await http.get(
+      Uri.parse(ApiDomain.domain + ApiEndPoint.products),
+      // headers: {
+      //   "Authorization": "Bearer ${AuthRepository.token}",
+      //   "ngrok-skip-browser-warning": "true",
+      // },
+    );
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as List;
+      for (var item in data) {
+        products.add(Product.fromJson(item));
+      }
+      ProductRepository.products = products;
+      setState(() {});
+    }
+
   }
 
   @override
@@ -205,7 +238,7 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
             padding: EdgeInsets.all(50),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(15)
+              borderRadius: BorderRadius.circular(15),
             ),
             child: ProductRepository.cartItems.isEmpty
                 ? Column(
@@ -236,7 +269,12 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(item.product.name, style: TextStyle(fontWeight: FontWeight.bold),),
+                                    Text(
+                                      item.product.name,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                     IconButton(
                                       onPressed: () {
                                         ProductRepository.removeProductFromCart(
@@ -244,13 +282,18 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
                                         );
                                         setState(() {});
                                       },
-                                      icon: Icon(CupertinoIcons.delete, color: Colors.red),
+                                      icon: Icon(
+                                        CupertinoIcons.delete,
+                                        color: Colors.red,
+                                      ),
                                     ),
                                   ],
                                 ),
 
                                 // === Price
-                                Text('\$ ${item.product.price.toStringAsFixed(2)} each'),
+                                Text(
+                                  '\$ ${item.product.price.toStringAsFixed(2)} each',
+                                ),
 
                                 // === QTY and Subtotal
                                 Row(
@@ -258,29 +301,30 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
                                     IconButton(
                                       onPressed: () {
                                         ProductRepository.decreaseQty(item.id);
-                                        setState(() {
-                                          
-                                        });
+                                        setState(() {});
                                       },
-                                      icon: Icon(Icons.remove,),
+                                      icon: Icon(Icons.remove),
                                     ),
                                     Text(item.qty.toString()),
                                     IconButton(
                                       onPressed: () {
                                         ProductRepository.increaseQty(item.id);
-                                        setState(() {
-                                          
-                                        });
+                                        setState(() {});
                                       },
-                                      icon: Icon(Icons.add,),
+                                      icon: Icon(Icons.add),
                                     ),
                                     Spacer(),
-                                    Text('\$ ${item.totalPrice.toStringAsFixed(2)}', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),),
+                                    Text(
+                                      '\$ ${item.totalPrice.toStringAsFixed(2)}',
+                                      style: TextStyle(
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ],
                             ),
-                          
                           ),
                         )
                         .toList(),
@@ -354,9 +398,12 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
                               : () async {
                                   ProductRepository.checkout();
                                   _showLoadings();
-                                  await Future.delayed(Duration(seconds: 2), () {
-                                    Navigator.pop(context);
-                                  });
+                                  await Future.delayed(
+                                    Duration(seconds: 2),
+                                    () {
+                                      Navigator.pop(context);
+                                    },
+                                  );
                                   Navigator.pop(context);
                                 },
                           style: TextButton.styleFrom(

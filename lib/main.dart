@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:midterm/screens/flash_screen.dart';
 import 'package:midterm/screens/home_screen.dart';
 import 'package:midterm/screens/login_screen.dart';
 
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: FlashScreen(),
       theme: ThemeData(
         useMaterial3: false,
         appBarTheme: AppBarThemeData(

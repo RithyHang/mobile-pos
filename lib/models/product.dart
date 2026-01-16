@@ -14,4 +14,15 @@ class Product {
     required this.stock,
     required this.image,
   });
+
+  factory Product.fromJson(Map<String, dynamic> json) {
+    return Product(
+      id: json['id'],
+      name: json['title'],
+      category: json['category'],
+      price: json['price'] ?? 0.0,
+      image: json['image'] ?? '',
+      stock: json['stock'] ?? 0,
+    );
+  }
 }
