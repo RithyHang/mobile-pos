@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:midterm/api/domain/domain.dart';
 import 'package:midterm/api/end_point/api_end_point.dart';
+import 'package:midterm/database/db_helper.dart';
 import 'package:midterm/models/product.dart';
-import 'package:midterm/repositories/auth_repository.dart';
 import 'package:midterm/repositories/product_repository.dart';
 import 'package:http/http.dart' as http;
 
@@ -19,7 +19,7 @@ class NewSaleScreen extends StatefulWidget {
 
 class _NewSaleScreenState extends State<NewSaleScreen> {
   @override
-  void initState(){
+  void initState() {
     super.initState();
     initData();
   }
@@ -143,68 +143,86 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
                     ),
 
                     // ------------- product image ----------
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Stack(
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            constraints: BoxConstraints(
-                              minWidth: double.infinity,
-                              minHeight: 120,
-                              maxHeight: 160,
-                            ),
-                            child: Image.network(
-                              product.image,
-                              height: 16,
-                              fit: BoxFit.cover,
-                              alignment: Alignment.topCenter,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Icon(
-                                    CupertinoIcons.cube,
-                                    size: 48,
-                                    color: Color(0xFF99A1AF),
-                                  ),
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: 8),
-
-                        // ------------- product detail --------------
-                        Text(
-                          product.name,
-                          maxLines: 1,
-                          style: TextStyle(fontSize: 14, color: Colors.black),
-                        ),
-                        Text(
-                          product.category,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF6A7282),
-                          ),
-                        ),
-                        SizedBox(height: 4),
-
-                        // ------------- product price and stock --------------
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                constraints: BoxConstraints(
+                                  minWidth: double.infinity,
+                                  minHeight: 120,
+                                  maxHeight: 160,
+                                ),
+                                child: Image.network(
+                                  product.image,
+                                  height: 16,
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.topCenter,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Icon(
+                                        CupertinoIcons.cube,
+                                        size: 48,
+                                        color: Color(0xFF99A1AF),
+                                      ),
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(height: 8),
+
+                            // ------------- product detail --------------
                             Text(
-                              '\$${product.price.toStringAsFixed(2)}',
+                              product.name,
+                              maxLines: 1,
                               style: TextStyle(
-                                fontSize: 16,
-                                color: Color(0xFF00A63E),
+                                fontSize: 14,
+                                color: Colors.black,
                               ),
                             ),
                             Text(
-                              'Stock: ${product.stock}',
+                              product.category,
                               style: TextStyle(
-                                color: Color(0xFF6A7282),
                                 fontSize: 12,
+                                color: Color(0xFF6A7282),
                               ),
+                            ),
+                            SizedBox(height: 4),
+
+                            // ------------- product price and stock --------------
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '\$${product.price.toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Color(0xFF00A63E),
+                                  ),
+                                ),
+                                Text(
+                                  'Stock: ${product.stock}',
+                                  style: TextStyle(
+                                    color: Color(0xFF6A7282),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
+                        ),
+
+                        // Favorite Button
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: IconButton(
+                            onPressed: () async{
+                              await DbHelper.instance.saveProductToFavorite(product);
+                            },
+                            icon: Icon(Icons.favorite_outline),
+                          ),
                         ),
                       ],
                     ),

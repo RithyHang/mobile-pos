@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:midterm/screens/cart_item.dart';
 
 class Transaction {

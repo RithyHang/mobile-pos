@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:midterm/repositories/product_repository.dart';
+import 'package:midterm/screens/favorite_screen.dart';
+import 'package:midterm/screens/flash_screen.dart';
 import 'package:midterm/screens/history_screen.dart';
-import 'package:midterm/screens/login_screen.dart';
 import 'package:midterm/screens/new_sale_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,58 +15,101 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<ScaffoldState> _drawerKey = GlobalKey<ScaffoldState>();
 
   // Functions
-  void logOut(){
+  void logOut() async {
+    await Future.delayed(Duration(seconds: 2));
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('pos.token');
     Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-        (route) => false);
+      context,
+      MaterialPageRoute(builder: (context) => FlashScreen()),
+      (route) => false,
+    );
   }
 
   _showLogoutDialog() {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(15)),
-        title: Text("Logout"),
-        content: Text("Are you sure you want to log out?"),
-        actions: [
-          // The "No" button
-          TextButton(
-            onPressed: () => Navigator.pop(context), // Just closes the dialog
-            child: Text("Cancel", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadiusGeometry.circular(15),
           ),
-          // "Yes" button
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              logOut();
-            },
-            child: Text("Logout", style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-
+          title: Text("Logout"),
+          content: Text("Are you sure you want to log out?"),
+          actions: [
+            // The "No" button
+            TextButton(
+              onPressed: () => Navigator.pop(context), // closes the dialog
+              child: Text(
+                "Cancel",
+                style: TextStyle(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            // "Yes" button
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                logOut();
+              },
+              child: Text("Logout", style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text('Dashboard', style: TextStyle(fontSize: 20)),
-          GestureDetector(
-            onTap: _showLogoutDialog,
-            child: Text('Logout', style: TextStyle(color: Colors.green[700]),),
-          )
-        ],
-      )),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FavoriteScreen()),
+                );
+                setState(() {});
+              },
+              child: Row(
+                children: [
+                  Icon(Icons.favorite),
+                  SizedBox(width: 20),
+                  Text('Favorite'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      key: _drawerKey,
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Dashboard', style: TextStyle(fontSize: 20)),
+            GestureDetector(
+              onTap: _showLogoutDialog,
+              child: Text('Logout', style: TextStyle(color: Colors.green[700])),
+            ),
+          ],
+        ),
+
+        leading: IconButton(
+          onPressed: () {
+            _drawerKey.currentState?.openDrawer();
+          },
+          icon: Icon(Icons.access_alarm),
+        ),
+      ),
       body: ListView(
         padding: EdgeInsets.all(20),
         children: [

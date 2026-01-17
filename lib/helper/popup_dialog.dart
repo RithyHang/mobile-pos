@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class PopupDialog {
   static void showLoading(BuildContext context) {
@@ -48,15 +47,6 @@ class PopupDialog {
     String title = "Information",
     String? description,
   }) {
-    // showDialog(context: context, builder: (context) => Dialog(
-    //   child: Column(
-    //     children: [
-    //       Text(title),
-    //       Text(description ?? ""),
-    //     ],
-    //   ),
-    // ));
-
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -92,7 +82,7 @@ class PopupDialog {
 
               const SizedBox(height: 20),
 
-              // OK button (same style as Sign In)
+              // OK button
               SizedBox(
                 width: double.infinity,
                 height: 48,
