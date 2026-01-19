@@ -107,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onPressed: () {
             _drawerKey.currentState?.openDrawer();
           },
-          icon: Icon(Icons.access_alarm),
+          icon: Icon(Icons.menu),
         ),
       ),
       body: ListView(

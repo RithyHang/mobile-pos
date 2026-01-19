@@ -30,7 +30,7 @@ class DbHelper {
 
   Future<void> createTable(Database db) async {
     await db.execute(
-      'CREATE TABLE products (id INTEGER PRIMARY KEY AUTOINCREMENT, name STRING, price DOUBLE, category STRING, stock INTEGER, image STRING);',
+      'CREATE TABLE products (id INTEGER PRIMARY KEY AUTOINCREMENT, name STRING, price DOUBLE, category STRING, stock INTEGER, image STRING, isFavorite BOOL NOT NULL DEFAULT FALSE);',
     );
   }
 
@@ -39,10 +39,14 @@ class DbHelper {
     final result = await db.insert(
       'products',
       product.toJson(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    print(result);
+    // print(result);
   }
+
+    Future<void> removeFavorite(int id) async {
+    final db = await DbHelper.instance.database;
+    await db.delete('products', where: 'id = ?', whereArgs: [id]);
+    }
 
   Future<List<Product>> getFavoriteProducts() async {
     final db = await database;

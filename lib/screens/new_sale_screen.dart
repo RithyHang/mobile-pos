@@ -25,6 +25,7 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
   }
 
   // list variables
+  bool isFavorite = false;
   bool isCartEmpty = false;
   final TextEditingController _searchController = TextEditingController();
   int qty = 0;
@@ -34,6 +35,20 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
     ProductRepository.addToCart(product);
     setState(() {});
   }
+
+
+  Future<void> applyFavoritesToProducts() async {
+  final favoriteProducts =
+      await DbHelper.instance.getFavoriteProducts();
+
+  final favoriteIds =
+      favoriteProducts.map((p) => p.id).toSet();
+
+  for (final product in ProductRepository.products) {
+    product.isFavorite = favoriteIds.contains(product.id);
+  }
+}
+
 
   _showLoadings() {
     showDialog(
@@ -88,6 +103,7 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
       ProductRepository.products = products;
       setState(() {});
     }
+    await applyFavoritesToProducts();
   }
 
   @override
@@ -218,10 +234,31 @@ class _NewSaleScreenState extends State<NewSaleScreen> {
                         Align(
                           alignment: Alignment.topRight,
                           child: IconButton(
-                            onPressed: () async{
-                              await DbHelper.instance.saveProductToFavorite(product);
+                            onPressed: () async {
+                              // await DbHelper.instance.saveProductToFavorite(product);
+                              if (product.isFavorite) {
+                                await DbHelper.instance.removeFavorite(
+                                  product.id,
+                                );
+                              } else {
+                                await DbHelper.instance.saveProductToFavorite(
+                                  product,
+                                );
+                              }
+
+                              setState(() {
+                                // Change ONLY this specific product's status
+                                product.isFavorite = !product.isFavorite;
+                              });
                             },
-                            icon: Icon(Icons.favorite_outline),
+                            icon: Icon(
+                              product.isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: product.isFavorite
+                                  ? Colors.red
+                                  : Colors.grey,
+                            ),
                           ),
                         ),
                       ],
