@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:midterm/database/db_helper.dart';
 import 'package:midterm/screens/flash_screen.dart';
+import 'package:midterm/screens/home_screen.dart';
+import 'package:midterm/screens/product_list_screen.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: FlashScreen(),
+      home: HomeScreen(),
       theme: ThemeData(
         useMaterial3: false,
         appBarTheme: AppBarThemeData(
