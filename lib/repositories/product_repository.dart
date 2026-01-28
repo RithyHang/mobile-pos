@@ -3,18 +3,7 @@ import 'package:midterm/models/transaction.dart';
 import 'package:midterm/screens/cart_item.dart';
 
 class ProductRepository {
-  static List<Product> products = [
-    Product(
-      id: 1,
-      name: 'Premium Coffee Beans',
-      category: 'Beverages',
-      price: 12.99,
-      stock: 50,
-      image:
-          'https://images.unsplash.com/photo-1675306408031-a9aad9f23308?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y29mZmVlJTIwYmVhbnN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=500',
-      isFavorite: false
-    )
-  ];
+  static List<Product> products = [];
 
   static List<CartItem> cartItems = [];
   static int totalQty = 0;

@@ -80,17 +80,23 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // HELLO ANIMATION
-                Lottie.asset(
-                  'assets/lotties/hello_animation.json',
-                  height: 300,
-                ),
+                // Lottie.asset(
+                //   'assets/lotties/hello_animation.json',
+                //   height: 300,
+                // ),
+                SizedBox(height: 135),
 
                 // ------------ HELLO AGAIN ------------
+                Text(
+                  "Rithymation",
+                  style: TextStyle(fontSize: 48, color: Color(0xFFDE302F)),
+                ),
+                SizedBox(height: 13,),
                 Text(
                   "Welcome back, you've been missed!",
                   style: TextStyle(fontSize: 20),
                 ),
-                SizedBox(height: 50),
+                SizedBox(height: 120),
 
                 // ------------ EMAIL TEXT FIELD ------------
                 Padding(
@@ -172,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 60),
 
                 // ------------ SIGN IN BUTTON ------------
                 Padding(
@@ -183,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: TextButton(
                       onPressed: login,
                       style: TextButton.styleFrom(
-                        backgroundColor: Colors.deepPurple,
+                        backgroundColor: Color(0xFFDE302F),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -200,24 +206,53 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                SizedBox(height: 10),
+                SizedBox(height: 80),
 
                 // ------------ NOT A MEMBER? REGISTER NOW ------------
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Column(
                   children: [
-                    Text(
-                      'Not a member?',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '-------',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          'or sign in with',
+                          style: TextStyle(fontWeight: FontWeight.w100,),
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          '-------',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
-                    SizedBox(width: 4),
-                    Text(
-                      'Register Now',
-                      style: TextStyle(
-                        color: Colors.blue.shade900,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 60,
+                          child: Image.asset('assets/icons/google.png'),
+                        ),
+                        SizedBox(width: 45),
+                        Container(
+                          height: 60,
+                          child: Image.asset('assets/icons/apple-logo.png'),
+                        )
+                      ],
                     ),
+                    SizedBox(height: 25,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Don't have an account?"),
+                        Text(" Signup", style: TextStyle(color: Color(0xFFDE302F)),)
+                      ],
+                    )
                   ],
                 ),
               ],

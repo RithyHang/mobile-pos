@@ -15,50 +15,50 @@ class FlashScreen extends StatefulWidget {
 class _FlashScreenState extends State<FlashScreen> {
   @override
   void initState() {
-    _init();
-    super.initState();
+    super.initState(); // ✅ Call this first
+    _init();           // ✅ Then run your logic
   }
 
-  // Functions
-  _init() async{
-    await Future.delayed(Duration(seconds: 2));
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> _init() async {
+    await Future.delayed(const Duration(seconds: 2));
+    final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('pos.token');
     AuthRepository.token = token;
 
-    if(token != null){
+    final nextScreen = token != null ? const HomeScreen() : const LoginScreen();
+    if (mounted) {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-        (route) => false);
-    }else{
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-        (route) => false);
+        MaterialPageRoute(builder: (context) => nextScreen),
+            (route) => false,
+      );
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            FlutterLogo(
-              size: 86,
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            CupertinoActivityIndicator(),
-          ],
+      backgroundColor: Colors.red,
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 20),
+              const Text(
+                'Rithymation',
+                style: TextStyle(
+                  fontSize: 48,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const CupertinoActivityIndicator(radius: 14),
+            ],
+          ),
         ),
-      )
+      ),
     );
   }
 }

@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  google_fonts: ^6.2.0
   flutter:
     sdk: flutter
 
@@ -65,7 +66,7 @@ flutter:
   assets:
     - assets/fonts/
 #    - assets/images/
-#    - assets/icons/
+    - assets/icons/
     - assets/lotties/
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -88,6 +89,9 @@ flutter:
     - family: Pixelify Sans
       fonts:
         - asset: assets/fonts/PixelifySans-Regular.ttf
+    - family: Jaro
+      fonts:
+        - asset: assets/fonts/Jaro-Regular-VariableFont_opsz.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
