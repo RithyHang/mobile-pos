@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:midterm/models/product.dart';
+import 'package:midterm/screens/cart_screen.dart';
 import 'package:midterm/screens/product_dtail_screen.dart';
+import 'package:midterm/screens/profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api/domain/domain.dart';
@@ -29,7 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // ========== list variables ==========
-  int _selectedIndex = 0; // <-- Track active icon in footer
   bool isFavorite = false;
   bool isCartEmpty = false;
   final TextEditingController _searchController = TextEditingController();
@@ -39,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> categories = ['All']; // Default list
   String selectedCategory = 'All'; // Currently selected
   String searchQuery = "";
+  
 
   Future<void> _fetchCategories() async {
     final response = await http.get(
@@ -99,31 +101,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // ------ Add to Cart --------
-  void addToCart(product) {
-    // your cart logic here
-  }
-
-  void _onFooterItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    // Navigate to pages based on index
-    switch (index) {
-      case 0:
-        // Already on HomeScreen, no need to navigate
-        break;
-      case 1:
-        // Navigate to CartScreen
-        // Navigator.push(context, MaterialPageRoute(builder: (_) => CartScreen()));
-        break;
-      case 2:
-        // Navigate to ProfileScreen
-        // Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen()));
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -397,23 +374,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-      ),
-
-      // ================== FOOTER ==================
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xFFDE302F),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white60,
-        currentIndex: _selectedIndex,
-        onTap: _onFooterItemTapped,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Cart',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
       ),
     );
   }

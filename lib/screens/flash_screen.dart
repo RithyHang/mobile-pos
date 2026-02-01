@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:midterm/repositories/auth_repository.dart';
 import 'package:midterm/screens/home_screen.dart';
 import 'package:midterm/screens/login_screen.dart';
+import 'package:midterm/screens/page_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FlashScreen extends StatefulWidget {
@@ -27,7 +28,7 @@ class _FlashScreenState extends State<FlashScreen> {
 
     AuthRepository.token = token;
 
-    final nextScreen = token != null ? const HomeScreen() : const LoginScreen();
+    final nextScreen = token != null ? const MyHome() : const LoginScreen();
     if (mounted) {
       Navigator.pushAndRemoveUntil(
         context,

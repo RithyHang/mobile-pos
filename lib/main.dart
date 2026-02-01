@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:midterm/database/db_helper.dart';
 import 'package:midterm/screens/flash_screen.dart';
-import 'package:midterm/screens/home_screen.dart';
-import 'package:midterm/screens/login_screen.dart';
-import 'package:midterm/screens/product_list_screen.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();

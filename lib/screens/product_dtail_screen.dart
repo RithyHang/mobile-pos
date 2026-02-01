@@ -1,44 +1,96 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:midterm/repositories/product_repository.dart'; 
 
-class ProductDetailScreen extends StatelessWidget {
-  final product;
+class ProductDetailScreen extends StatefulWidget {
+  final dynamic product; 
 
-  const ProductDetailScreen({
-    super.key,
-    required this.product,
-  });
+  const ProductDetailScreen({super.key, required this.product});
+
+  @override
+  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+}
+
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  dynamic detailedProduct;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProductDetails();
+  }
+
+  // Requirement: Fetch product detail by ID
+  Future<void> _fetchProductDetails() async {
+    final response = await http.get(
+      Uri.parse('https://fakestoreapi.com/products/${widget.product.id}'),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        detailedProduct = json.decode(response.body);
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(product.name),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.network(product.image),
-            const SizedBox(height: 16),
-            Text(
-              product.name,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+      appBar: AppBar(title: Text(widget.product.name)),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Requirement: Display Image
+                  Center(
+                    child: Image.network(detailedProduct['image'], height: 250),
+                  ),
+                  const SizedBox(height: 20),
+                  
+                  // Requirement: Display Name
+                  Text(
+                    detailedProduct['title'],
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                  
+                  // Requirement: Display Price
+                  Text(
+                    '\$${detailedProduct['price']}',
+                    style: const TextStyle(fontSize: 20, color: Color(0xFF00A63E)),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Requirement: Display Description
+                  const Text("Description", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(detailedProduct['description']),
+                  
+                  const SizedBox(height: 30),
+
+                  // Requirement: Add to cart button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF002455)),
+                      onPressed: () {
+                        ProductRepository.addToCart(widget.product); 
+                        
+                        // Providing feedback
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Added to Cart!")),
+                        );
+                      },
+                      child: const Text("Add to Cart", style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              '\$${product.price.toStringAsFixed(2)}',
-              style: const TextStyle(
-                fontSize: 20,
-                color: Color(0xFF00A63E),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

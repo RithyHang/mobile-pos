@@ -9,6 +9,7 @@ import 'package:midterm/api/end_point/api_end_point.dart';
 import 'package:midterm/helper/popup_dialog.dart';
 import 'package:midterm/repositories/auth_repository.dart';
 import 'package:midterm/screens/home_screen.dart';
+import 'package:midterm/screens/page_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -70,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => const MyHome()),
         (route) => false,
       );
       return;
