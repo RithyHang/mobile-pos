@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:midterm/models/product.dart';
-import 'package:midterm/screens/cart_screen.dart';
 import 'package:midterm/screens/product_dtail_screen.dart';
-import 'package:midterm/screens/profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api/domain/domain.dart';
@@ -201,9 +199,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text(
                           selectedCategory, // Displays the selected one
-                          style: GoogleFonts.jaro(
+                          style: TextStyle(
                             fontSize: 16,
-                            color: const Color(0xFFDE302F),
+                            // color: const Color(0xFFDE302F),
                           ),
                         ),
                         const SizedBox(width: 4),

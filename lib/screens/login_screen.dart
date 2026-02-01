@@ -1,14 +1,11 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:http/http.dart' as http;
 import 'package:midterm/api/domain/domain.dart';
 import 'package:midterm/api/end_point/api_end_point.dart';
 import 'package:midterm/helper/popup_dialog.dart';
 import 'package:midterm/repositories/auth_repository.dart';
-import 'package:midterm/screens/home_screen.dart';
 import 'package:midterm/screens/page_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,7 +18,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isShowPassword = false;
-  TextEditingController _emailController = TextEditingController();
+  TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
   void togglePassword() {
@@ -32,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   // LOGIN Function
   Future<void> login() async {
   // ---------- BASIC VALIDATION ----------
-  if (_emailController.text.isEmpty ||
+  if (_usernameController.text.isEmpty ||
       _passwordController.text.isEmpty) {
     PopupDialog.showError(
       context,
@@ -49,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Uri.parse(ApiDomain.domain + ApiEndPoint.login),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
-        "username": _emailController.text.trim(),
+        "username": _usernameController.text.trim(),
         "password": _passwordController.text,
       }),
     );
@@ -64,10 +61,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // FakestoreAPI returns ONLY token
       prefs.setString('pos.token', data['token']);
-      prefs.setString('pos.username', _emailController.text);
+      prefs.setString('pos.username', _usernameController.text);
 
       AuthRepository.token = data['token'];
-      AuthRepository.username = _emailController.text;
+      AuthRepository.username = _usernameController.text;
 
       Navigator.pushAndRemoveUntil(
         context,
@@ -103,6 +100,9 @@ class _LoginScreenState extends State<LoginScreen> {
       description: 'Unable to connect to server',
     );
   }
+
+
+
 }
 
 
@@ -147,27 +147,25 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: TextFormField(
-                        controller: _emailController,
+                        controller: _usernameController,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your email';
+                            return 'Please enter your username';
                           }
 
                           // Regular Expression for email validation
-                          final emailRegExp = RegExp(
-                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                          );
+                          final usernameRegExp = RegExp(r'^[a-zA-Z0-9._]{3,20}$');
 
-                          if (!emailRegExp.hasMatch(value)) {
-                            return 'Please enter a valid email address';
+                          if (!usernameRegExp.hasMatch(value)) {
+                            return 'Please enter a valid username';
                           }
 
                           return null;
                         },
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Email',
+                          hintText: 'Username',
                         ),
                       ),
                     ),

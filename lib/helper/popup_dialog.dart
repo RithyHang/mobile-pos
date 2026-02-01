@@ -57,7 +57,7 @@ class PopupDialog {
             mainAxisSize: MainAxisSize.min,
             children: [
               // Error icon
-              Icon(Icons.error_outline, color: Colors.deepPurple, size: 48),
+              Icon(Icons.error_outline, color: Color(0xFFDE302F), size: 48),
 
               const SizedBox(height: 12),
 
@@ -89,7 +89,7 @@ class PopupDialog {
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),
                   style: TextButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
+                    backgroundColor: Color(0xFFDE302F),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

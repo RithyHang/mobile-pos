@@ -3,6 +3,7 @@ import 'package:http/http.dart' as CupertinoIcons;
 import 'package:lottie/lottie.dart';
 import 'package:midterm/database/db_helper.dart';
 import 'package:midterm/repositories/product_repository.dart';
+import 'package:midterm/screens/page_controller.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -113,21 +114,29 @@ class _CartScreenState extends State<CartScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Image.network(
-                                    item.product.image,
-                                    width: 50,
-                                    height: 50,
-                                    fit: BoxFit.cover,
-                                  ),
+                                item.product.image,
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                              ),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    item.product.name,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                  // 1. Wrap the Text in Expanded to force it to take only available space
+                                  Expanded(
+                                    child: Text(
+                                      item.product.name,
+                                      maxLines: 1, // Keeps it on one line
+                                      overflow: TextOverflow
+                                          .ellipsis, // Adds "..." at the end if too long
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
+                                  // 2. Add some spacing so the text doesn't touch the delete icon
+                                  SizedBox(width: 10),
                                   IconButton(
                                     onPressed: () {
                                       ProductRepository.removeProductFromCart(
@@ -135,19 +144,16 @@ class _CartScreenState extends State<CartScreen> {
                                       );
                                       setState(() {});
                                     },
-                                    icon: Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
-                                    ),
+                                    icon: Icon(Icons.delete, color: Colors.red),
                                   ),
                                 ],
                               ),
-                          
+
                               // === Price
                               Text(
                                 '\$ ${item.product.price.toStringAsFixed(2)} each',
                               ),
-                          
+
                               // === QTY and Subtotal
                               Row(
                                 children: [
@@ -248,27 +254,65 @@ class _CartScreenState extends State<CartScreen> {
                           onPressed: ProductRepository.cartItems.isEmpty
                               ? null
                               : () async {
-                                  ProductRepository.checkout();
-                                  _showLoadings();
+                                  _showLoadings(); // Show your existing loading dialog
+
+                                  // 1. Fake API Delay (Requirement 3.5)
                                   await Future.delayed(
-                                    Duration(seconds: 2),
-                                    () {
-                                      Navigator.pop(context);
-                                    },
+                                    const Duration(seconds: 2),
                                   );
-                                  Navigator.pop(context);
+
+                                  // 2. Clear the cart logic
+                                  ProductRepository.clearCart();
+
+                                  if (mounted) {
+                                    // 3. Close the loading dialog
+                                    Navigator.pop(context);
+
+                                    // 4. Show the Success Message (Requirement 3.5)
+                                    showDialog(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text("Success!"),
+                                        content: const Text(
+                                          "Your order has been placed successfully.",
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              // 1. Close the dialog
+                                              Navigator.pop(context);
+
+                                              // 2. Instead of popping the screen, jump to the first tab (Home)
+                                              // This prevents the black screen
+                                              Navigator.of(
+                                                context,
+                                              ).pushAndRemoveUntil(
+                                                MaterialPageRoute(
+                                                  builder: (_) =>
+                                                      const MyHome(),
+                                                ),
+                                                (route) => false,
+                                              );
+                                            },
+                                            child: const Text("Back to Home"),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
                                 },
                           style: TextButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 8,
                             ),
-                            backgroundColor: Color(0xFF00A63E),
+                            backgroundColor: const Color(0xFF00A63E),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadiusGeometry.circular(8),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Checkout',
                             style: TextStyle(
                               fontSize: 16,
