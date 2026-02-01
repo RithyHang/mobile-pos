@@ -29,45 +29,81 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   // LOGIN Function
-  void login() async {
-    print('${_emailController.text}, ${_passwordController.text}');
-    PopupDialog.showLoading(context);
+  Future<void> login() async {
+  // ---------- BASIC VALIDATION ----------
+  if (_emailController.text.isEmpty ||
+      _passwordController.text.isEmpty) {
+    PopupDialog.showError(
+      context,
+      title: 'Missing Information',
+      description: 'Please enter username and password',
+    );
+    return;
+  }
 
-    // Send a POST request to the API
+  PopupDialog.showLoading(context);
+
+  try {
     final response = await http.post(
       Uri.parse(ApiDomain.domain + ApiEndPoint.login),
+      headers: {"Content-Type": "application/json"},
       body: jsonEncode({
-        "username": _emailController.text,
+        "username": _emailController.text.trim(),
         "password": _passwordController.text,
       }),
-      headers: {"Content-Type": "application/json"},
     );
 
-    // Close the loading dialog
     PopupDialog.dismissLoading(context);
 
-    final data = json.decode(response.body);
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // ---------- SUCCESS ----------
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final data = json.decode(response.body);
 
-    // Handle the response
-    if (response.statusCode == 201 || response.statusCode == 200) {
+      final prefs = await SharedPreferences.getInstance();
+
+      // FakestoreAPI returns ONLY token
       prefs.setString('pos.token', data['token']);
+      prefs.setString('pos.username', _emailController.text);
+
       AuthRepository.token = data['token'];
+      AuthRepository.username = _emailController.text;
 
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
         (route) => false,
       );
-    } else {
+      return;
+    }
+
+    // ---------- WRONG CREDENTIALS ----------
+    if (response.statusCode == 401) {
       PopupDialog.showError(
         context,
-        title: 'Login Error',
-        description: data['message'] ?? 'Login Failed',
+        title: 'Login Failed',
+        description: 'Invalid username or password',
       );
+      return;
     }
-    print(response);
+
+    // ---------- OTHER SERVER ERRORS ----------
+    PopupDialog.showError(
+      context,
+      title: 'Server Error',
+      description: 'Something went wrong. Please try again.',
+    );
+  } catch (e) {
+    PopupDialog.dismissLoading(context);
+
+    // ---------- NETWORK / PARSE ERROR ----------
+    PopupDialog.showError(
+      context,
+      title: 'Connection Error',
+      description: 'Unable to connect to server',
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

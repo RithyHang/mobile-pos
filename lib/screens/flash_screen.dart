@@ -23,6 +23,8 @@ class _FlashScreenState extends State<FlashScreen> {
     await Future.delayed(const Duration(seconds: 2));
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('pos.token');
+
+
     AuthRepository.token = token;
 
     final nextScreen = token != null ? const HomeScreen() : const LoginScreen();
